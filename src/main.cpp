@@ -86,6 +86,7 @@ struct {
   uint16_t buttonSelectedColor;
   uint16_t accentColor;
   uint16_t textColor;
+  bool flipTextColorOnUnselectedBg = false;
   bool flipTextColorOnAccentBg = false;
 } colorTheme[colorThemesQty];
 
@@ -120,12 +121,11 @@ void updateTemperature();
 void updateHumidity();
 void loadSettings();
 void saveSettings();
-void writecolorTheme();
+void writeColorThemes();
 void drawAnnealingMenu();
 void drawSettingsMenu();
-void drawAppearanceMenu();
-void drawColorThBox(int16_t xStart, int8_t yStart, uint8_t color, bool selected);
-void NEWdrawColorThBox(uint8_t color);
+//void drawAppearanceMenu();
+void drawColorThBox(uint8_t color);
 
 void limitEncoderPos(int16_t &pos, int16_t minPos, int16_t maxPos, bool wraping);
 
@@ -156,7 +156,7 @@ void setup() {
   Serial.println("Started!");
 
   writeFilamentProperties();
-  writecolorTheme();
+  writeColorThemes();
   settings.selectedcolorTheme = 2;
 
   tft.setRotation(1);
@@ -195,6 +195,7 @@ static bool selectingValue = false;
 static bool selectingFilament = false;
 static uint8_t selectedTemp = 0;
 static uint8_t selectedTime = 0;
+static bool drewMainMenu = true;
 static bool drewDryingMenu = false;
 static bool drewSettingsMenu = false;
 static bool drewAppearanceMenu = false;
@@ -202,11 +203,17 @@ encoder.tick();
 
 if (currentMenu == 0) {
   limitEncoderPos(pos, 0, 2, true);
+  if (!drewMainMenu){
+    drawMainMenu();
+    drewMainMenu = true; 
+  }
   if (pos == 0 && selectedPos != 0) {
     canvasMMButton.fillScreen(colorTheme[settings.selectedcolorTheme].backgroundColor);
     canvasMMButton.fillRoundRect(padding, 0, 260, 32, 9, colorTheme[settings.selectedcolorTheme].buttonSelectedColor);
     canvasMMButton.setCursor(getCenteredTextX(padding, 260, 6), getCenteredTextY(0, 32, 1));
+    if (colorTheme[settings.selectedcolorTheme].flipTextColorOnUnselectedBg) canvasMMButton.setTextColor(colorTheme[settings.selectedcolorTheme].backgroundColor);
     canvasMMButton.print("Drying");
+    if (colorTheme[settings.selectedcolorTheme].flipTextColorOnUnselectedBg) canvasMMButton.setTextColor(colorTheme[settings.selectedcolorTheme].textColor);
     tft.drawRGBBitmap(0, 12, canvasMMButton.getBuffer(), canvasMMButton.width(), canvasMMButton.height());
 
     canvasMMButton.fillRoundRect(padding, 0, 260, 32, 9, colorTheme[settings.selectedcolorTheme].buttonUnselectedColor);
@@ -229,7 +236,9 @@ if (currentMenu == 0) {
 
     canvasMMButton.fillRoundRect(padding, 0, 260, 32, 9, colorTheme[settings.selectedcolorTheme].buttonSelectedColor);
     canvasMMButton.setCursor(getCenteredTextX(padding, 260, 9), getCenteredTextY(0, 32, 1));
+    if (colorTheme[settings.selectedcolorTheme].flipTextColorOnUnselectedBg) canvasMMButton.setTextColor(colorTheme[settings.selectedcolorTheme].backgroundColor);
     canvasMMButton.print("Annealing");
+    if (colorTheme[settings.selectedcolorTheme].flipTextColorOnUnselectedBg) canvasMMButton.setTextColor(colorTheme[settings.selectedcolorTheme].textColor);
     tft.drawRGBBitmap(0, 56, canvasMMButton.getBuffer(), canvasMMButton.width(), canvasMMButton.height());
 
     canvasMMButton.fillRoundRect(padding, 0, 260, 32, 9, colorTheme[settings.selectedcolorTheme].buttonUnselectedColor);
@@ -252,7 +261,9 @@ if (currentMenu == 0) {
 
     canvasMMButton.fillRoundRect(padding, 0, 260, 32, 9, colorTheme[settings.selectedcolorTheme].buttonSelectedColor);
     canvasMMButton.setCursor(getCenteredTextX(padding, 260, 8), getCenteredTextY(0, 32, 1));
+    if (colorTheme[settings.selectedcolorTheme].flipTextColorOnUnselectedBg) canvasMMButton.setTextColor(colorTheme[settings.selectedcolorTheme].backgroundColor);
     canvasMMButton.print("Settings");
+    if (colorTheme[settings.selectedcolorTheme].flipTextColorOnUnselectedBg) canvasMMButton.setTextColor(colorTheme[settings.selectedcolorTheme].textColor);
     tft.drawRGBBitmap(0, 100, canvasMMButton.getBuffer(), canvasMMButton.width(), canvasMMButton.height());
     selectedPos = 2;
   }
@@ -265,7 +276,11 @@ if (debounceButton(RE_SW, pressed) == false && pressed == true /*&& tempSensorWo
     drewFSMenu = false;
   }
   else if (pos == 1) currentMenu = 3;
-  else if (pos == 2) currentMenu = 4;
+  else if (pos == 2){
+    currentMenu = 4;
+    pos == 0;
+    selectedPos == 0;
+  }
   encoder.setPosition(0);
 }
 
@@ -364,7 +379,10 @@ if (debounceButton(RE_SW, pressed) == false && pressed == true /*&& tempSensorWo
 
       canvasBackButton.setCursor(getCenteredTextX(0, 62, 4), getCenteredTextY(0, 23, 1));
       canvasBackButton.fillRoundRect(0, 0, 62, 23, 9, colorTheme[settings.selectedcolorTheme].buttonSelectedColor);//0x18C3
+      if (colorTheme[settings.selectedcolorTheme].flipTextColorOnUnselectedBg) canvasBackButton.setTextColor(colorTheme[settings.selectedcolorTheme].backgroundColor);
       canvasBackButton.print("Back");
+      if (colorTheme[settings.selectedcolorTheme].flipTextColorOnUnselectedBg) canvasBackButton.setTextColor(colorTheme[settings.selectedcolorTheme].textColor);
+      
       tft.drawRGBBitmap(0, 0, canvasBackButton.getBuffer(), canvasBackButton.width(), canvasBackButton.height());
       
 
@@ -394,7 +412,9 @@ if (debounceButton(RE_SW, pressed) == false && pressed == true /*&& tempSensorWo
 
       canvasStartButton.fillRoundRect(0, 0, 84, 32, 9, colorTheme[settings.selectedcolorTheme].buttonSelectedColor);
       canvasStartButton.setCursor(getCenteredTextX(0, 84, 5), getCenteredTextY(0, 32, 1));
+      if (colorTheme[settings.selectedcolorTheme].flipTextColorOnUnselectedBg) canvasStartButton.setTextColor(colorTheme[settings.selectedcolorTheme].backgroundColor);
       canvasStartButton.print("START");
+      if (colorTheme[settings.selectedcolorTheme].flipTextColorOnUnselectedBg) canvasStartButton.setTextColor(colorTheme[settings.selectedcolorTheme].textColor);
       tft.drawRGBBitmap(118, 138, canvasStartButton.getBuffer(), canvasStartButton.width(), canvasStartButton.height());
     }
   }
@@ -427,7 +447,7 @@ if (debounceButton(RE_SW, pressed) == false && pressed == true /*&& tempSensorWo
         analogWrite(MOSFET_PIN, heaterPower); //PWM on the heater
       
         uint16_t powerBarWidth = constrain(map(temperature*10, filament[selectedFilament].dryingTemperature*10-50, filament[selectedFilament].dryingTemperature*10, 320, 0), 0, 320);
-        canvasPowerBar.fillScreen(0x34FF);
+        canvasPowerBar.fillScreen(colorTheme[settings.selectedcolorTheme].buttonUnselectedColor);
         canvasPowerBar.fillRect(0, 0, powerBarWidth, 5, colorTheme[settings.selectedcolorTheme].accentColor);
         tft.drawRGBBitmap(0, 165, canvasPowerBar.getBuffer(), canvasPowerBar.width(), canvasPowerBar.height());
       }
@@ -510,17 +530,19 @@ if (debounceButton(RE_SW, pressed) == false && pressed == true /*&& tempSensorWo
 } else if (currentMenu == 3){
 
 } else if (currentMenu == 4){
+  limitEncoderPos(pos, 0, 1, true);
   if (!drewSettingsMenu){
     drawSettingsMenu();
     drewSettingsMenu = true;
   }
-  limitEncoderPos(pos, 0, 1, true);
-  
-  if (pos == 0 && selectedPos != 0) {
+
+  if (encoder.getPosition() == 0 && selectedPos != 0) {
     canvasMMButton.fillScreen(colorTheme[settings.selectedcolorTheme].backgroundColor);
     canvasMMButton.fillRoundRect(padding, 0, 260, 32, 9, colorTheme[settings.selectedcolorTheme].buttonSelectedColor);
     canvasMMButton.setCursor(getCenteredTextX(padding, 260, 10), getCenteredTextY(0, 32, 1));
+    if (colorTheme[settings.selectedcolorTheme].flipTextColorOnUnselectedBg) canvasMMButton.setTextColor(colorTheme[settings.selectedcolorTheme].backgroundColor);
     canvasMMButton.print("Appearance");
+    if (colorTheme[settings.selectedcolorTheme].flipTextColorOnUnselectedBg) canvasMMButton.setTextColor(colorTheme[settings.selectedcolorTheme].textColor);
     tft.drawRGBBitmap(0, 12, canvasMMButton.getBuffer(), canvasMMButton.width(), canvasMMButton.height());
 
     canvasMMButton.fillRoundRect(padding, 0, 260, 32, 9, colorTheme[settings.selectedcolorTheme].buttonUnselectedColor);
@@ -529,53 +551,73 @@ if (debounceButton(RE_SW, pressed) == false && pressed == true /*&& tempSensorWo
     tft.drawRGBBitmap(0, 56, canvasMMButton.getBuffer(), canvasMMButton.width(), canvasMMButton.height());
 
     selectedPos = 0;
+  } else if (encoder.getPosition() == 1 && selectedPos != 1) {
+    canvasMMButton.fillScreen(colorTheme[settings.selectedcolorTheme].backgroundColor);
+    canvasMMButton.fillRoundRect(padding, 0, 260, 32, 9, colorTheme[settings.selectedcolorTheme].buttonUnselectedColor);
+    canvasMMButton.setCursor(getCenteredTextX(padding, 260, 10), getCenteredTextY(0, 32, 1));
+    canvasMMButton.print("Appearance");
+    tft.drawRGBBitmap(0, 12, canvasMMButton.getBuffer(), canvasMMButton.width(), canvasMMButton.height());
+
+    canvasMMButton.fillRoundRect(padding, 0, 260, 32, 9, colorTheme[settings.selectedcolorTheme].buttonSelectedColor);
+    canvasMMButton.setCursor(getCenteredTextX(padding, 260, 4), getCenteredTextY(0, 32, 1));
+    if (colorTheme[settings.selectedcolorTheme].flipTextColorOnUnselectedBg) canvasMMButton.setTextColor(colorTheme[settings.selectedcolorTheme].backgroundColor);
+    canvasMMButton.print("Save");
+    if (colorTheme[settings.selectedcolorTheme].flipTextColorOnUnselectedBg) canvasMMButton.setTextColor(colorTheme[settings.selectedcolorTheme].textColor);
+    tft.drawRGBBitmap(0, 56, canvasMMButton.getBuffer(), canvasMMButton.width(), canvasMMButton.height());
+
+    selectedPos = 1;
   }
 
   
   if (debounceButton(RE_SW, pressed) == false && pressed == true) { //BUTTON PRESSED
-  pressed = false;
-  selectedPos = 0;
-  if (pos == 0){
-    currentMenu = 5;
-    drewAppearanceMenu = false;
-    drewSettingsMenu = false;
-  } else if (pos == 1){
-    currentMenu = 0;
-    drewAppearanceMenu = false;
-    drewSettingsMenu = false;
-    //saveSettings();
-  }
-  selectedPos = 0;
-  pos = 0;
-  encoder.setPosition(0);
-
+    pressed = false;
+    selectedPos = 0;
+      if (pos == 0){
+      currentMenu = 5;
+      drewAppearanceMenu = false;
+     drewSettingsMenu = false;
+    } else if (pos == 1){
+      currentMenu = 0;
+      drewAppearanceMenu = false;
+      drewSettingsMenu = false;
+      drewMainMenu = false;
+      //saveSettings();
+    }
+    selectedPos = settings.selectedcolorTheme;
+    pos = settings.selectedcolorTheme;
+    encoder.setPosition(settings.selectedcolorTheme);
   }
 } else if (currentMenu == 5){
-  //tft.setTextSize(1);
-  limitEncoderPos(pos, 0, 11, true);
+  limitEncoderPos(pos, 0, 12, true);
   if (!drewAppearanceMenu){
-    drawAppearanceMenu();
+    drawColorThBox(settings.selectedcolorTheme);
     drewAppearanceMenu = true;
   }
-  /*
+  
   if (pos != selectedPos){
-    
-    uint16_t xStart = (pos%4)*70+5;
-    uint8_t yStart = (pos/4)*50+5;
-    drawColorThBox(xStart, yStart, pos, true);
-    if (pos < selectedPos){
-      if (pos != 0) drawColorThBox( ((pos-1)%4)*70+5, ((pos-1)/4)*50+5, pos-1, false);
-      else drawColorThBox( ((11)%4)*70+5, ((11)/4)*50+5, 11, false);
-    } 
-    if (pos > selectedPos){
-      if (pos != 11) drawColorThBox( ((pos+1)%4)*70+5, ((pos+1)/4)*50+5, pos+1, false);
-      else drawColorThBox( ((0)%4)*70+5, ((0)/4)*50+5, 0, false);
-    } 
-    //drawColorThBox((pos-1%4)*70+5, (pos-1/4)*50+5, pos, false);
-    //drawColorThBox((pos+1%4)*70+5, (pos+1/4)*50+5, pos, false);
+    drawColorThBox(pos);
     selectedPos = pos;
-  }*/
-  tft.setTextSize(2);
+  }
+  if (debounceButton(RE_SW, pressed) == false && pressed == true) {
+    pressed = false;
+
+    settings.selectedcolorTheme = pos;
+    tft.setTextColor(colorTheme[settings.selectedcolorTheme].textColor);
+    canvasBackButton.setTextColor(colorTheme[settings.selectedcolorTheme].textColor);
+    canvasStartButton.setTextColor(colorTheme[settings.selectedcolorTheme].textColor);
+    canvasMMButton.setTextColor(colorTheme[settings.selectedcolorTheme].textColor);
+    canvasBackButton.fillScreen(colorTheme[settings.selectedcolorTheme].backgroundColor);
+    canvasStartButton.fillScreen(colorTheme[settings.selectedcolorTheme].backgroundColor);
+
+    currentMenu = 4;
+    drewAppearanceMenu = false;
+
+    selectedPos = 0;
+    pos = 0;
+    encoder.setPosition(0);
+  }
+
+
 }
 
 
@@ -609,7 +651,9 @@ void drawMainMenu() {
   tft.fillRoundRect(padding, 56, 260, 32, 9, colorTheme[settings.selectedcolorTheme].buttonUnselectedColor); //Annealing button BG
   tft.fillRoundRect(padding, 100, 260, 32, 9, colorTheme[settings.selectedcolorTheme].buttonUnselectedColor); //Settings button BG
   tft.setCursor(getCenteredTextX(padding, 260, 6), getCenteredTextY(12, 32, 1));
+  if (colorTheme[settings.selectedcolorTheme].flipTextColorOnUnselectedBg) tft.setTextColor(colorTheme[settings.selectedcolorTheme].backgroundColor);
   tft.print("Drying");
+  if (colorTheme[settings.selectedcolorTheme].flipTextColorOnUnselectedBg) tft.setTextColor(colorTheme[settings.selectedcolorTheme].textColor);
   tft.setCursor(getCenteredTextX(padding, 260, 9), getCenteredTextY(56, 32, 1));
   tft.print("Annealing");
   tft.setCursor(getCenteredTextX(padding, 260, 8), getCenteredTextY(100, 32, 1));
@@ -639,7 +683,9 @@ void drawFilamentSelectionMenu(){
   tft.fillScreen(colorTheme[settings.selectedcolorTheme].backgroundColor);
   tft.setCursor(getCenteredTextX(0, 62, 4), getCenteredTextY(0, 23, 1));
   tft.fillRoundRect(0, 0, 62, 23, 9, colorTheme[settings.selectedcolorTheme].buttonSelectedColor);
+  if (colorTheme[settings.selectedcolorTheme].flipTextColorOnUnselectedBg) tft.setTextColor(colorTheme[settings.selectedcolorTheme].backgroundColor);
   tft.print("Back");
+  if (colorTheme[settings.selectedcolorTheme].flipTextColorOnUnselectedBg) tft.setTextColor(colorTheme[settings.selectedcolorTheme].textColor);
   tft.setCursor(getCenteredTextX(0, 320, 15),0);
   tft.print("Select filament");
   drawFilament(selectedFilament, 0);
@@ -680,15 +726,21 @@ void drawFilament(uint8_t type, uint8_t highlight){
     canvasMMButton.setCursor(12,8);
     canvasMMButton.print(filament[type-1].name);
   }
-  if (highlight == 1) canvasMMButton.fillRoundRect(115, 0, 90, 32, 9, colorTheme[settings.selectedcolorTheme].buttonSelectedColor);
+  if (highlight == 1) {
+    canvasMMButton.fillRoundRect(115, 0, 90, 32, 9, colorTheme[settings.selectedcolorTheme].buttonSelectedColor);
+    canvasMMButton.drawRoundRect(115, 0, 90, 32, 9, colorTheme[settings.selectedcolorTheme].accentColor);
+    canvasMMButton.setCursor(getCenteredTextX(0, 320, filament[type].name.length()), getCenteredTextY(0, 32, 1));
+    if (colorTheme[settings.selectedcolorTheme].flipTextColorOnUnselectedBg) canvasMMButton.setTextColor(colorTheme[settings.selectedcolorTheme].backgroundColor);
+    canvasMMButton.print(filament[type].name);
+    if (colorTheme[settings.selectedcolorTheme].flipTextColorOnUnselectedBg) canvasMMButton.setTextColor(colorTheme[settings.selectedcolorTheme].textColor);
+  }
   if (highlight == 2) {
     canvasMMButton.fillRoundRect(115, 0, 90, 32, 9, colorTheme[settings.selectedcolorTheme].accentColor);
     canvasMMButton.setCursor(getCenteredTextX(0, 320, filament[type].name.length()), getCenteredTextY(0, 32, 1));
-    if (colorTheme[settings.selectedcolorTheme].flipTextColorOnAccentBg) canvasMMButton.setTextColor(colorTheme[settings.selectedcolorTheme].backgroundColor);
-    else canvasMMButton.setTextColor(0);
+    if (!colorTheme[settings.selectedcolorTheme].flipTextColorOnUnselectedBg) canvasMMButton.setTextColor(colorTheme[settings.selectedcolorTheme].backgroundColor);
     canvasMMButton.print(filament[type].name);
-    canvasMMButton.setTextColor(colorTheme[settings.selectedcolorTheme].textColor);
-  } else if (highlight == 0 || highlight == 1) {
+    if (!colorTheme[settings.selectedcolorTheme].flipTextColorOnUnselectedBg) canvasMMButton.setTextColor(colorTheme[settings.selectedcolorTheme].textColor);
+  } else if (highlight == 0) {
     canvasMMButton.drawRoundRect(115, 0, 90, 32, 9, colorTheme[settings.selectedcolorTheme].accentColor);
     canvasMMButton.setCursor(getCenteredTextX(0, 320, filament[type].name.length()), getCenteredTextY(0, 32, 1));
     canvasMMButton.print(filament[type].name);
@@ -724,14 +776,20 @@ void drawFilamentProperties(uint8_t type){
   }
   canvasMMButton.setCursor(0, 0);
   canvasMMButton.print("Drying temp.: ");
-  canvasMMButton.print(filament[type].dryingTemperature);
-  canvasMMButton.drawRect(195, 0, 4, 4, colorTheme[settings.selectedcolorTheme].textColor);
+  if (colorTheme[settings.selectedcolorTheme].flipTextColorOnUnselectedBg && selectingTemp){
+    canvasMMButton.setTextColor(colorTheme[settings.selectedcolorTheme].backgroundColor);
+    canvasMMButton.drawRect(195, 0, 4, 4, colorTheme[settings.selectedcolorTheme].backgroundColor);
+  } else canvasMMButton.drawRect(195, 0, 4, 4, colorTheme[settings.selectedcolorTheme].textColor);
+  canvasMMButton.print(filament[type].dryingTemperature);  
   canvasMMButton.setCursor(202, 0);
   canvasMMButton.println("C");
+  if (colorTheme[settings.selectedcolorTheme].flipTextColorOnUnselectedBg && selectingTemp) canvasMMButton.setTextColor(colorTheme[settings.selectedcolorTheme].textColor);
   canvasMMButton.print("Time: ");
+  if (colorTheme[settings.selectedcolorTheme].flipTextColorOnUnselectedBg && selectingTime) canvasMMButton.setTextColor(colorTheme[settings.selectedcolorTheme].backgroundColor);
   canvasMMButton.print(filament[type].dryingTime / hour);
   canvasMMButton.print("h");
-
+  if (colorTheme[settings.selectedcolorTheme].flipTextColorOnUnselectedBg && selectingTime) canvasMMButton.setTextColor(colorTheme[settings.selectedcolorTheme].textColor); 
+  
   Serial.println("Before drawRGBBitmap"); //Debug
   tft.drawRGBBitmap(0, 70, canvasMMButton.getBuffer(), canvasMMButton.width(), canvasMMButton.height());
   Serial.println("After drawRGBBitmap"); //Debug
@@ -807,7 +865,7 @@ void writeFilamentProperties(){
   //And other settings recomended by manufacturers
 }
 
-void writecolorTheme(){
+void writeColorThemes(){
   colorTheme[0].name = "Classic dark";
   colorTheme[0].backgroundColor = 0;
   colorTheme[0].buttonUnselectedColor = 0x18C3;
@@ -819,8 +877,9 @@ void writecolorTheme(){
   colorTheme[1].backgroundColor = 0xFFFF;
   colorTheme[1].buttonUnselectedColor = 0xEF5D;
   colorTheme[1].buttonSelectedColor = 0xB59C;
-  colorTheme[1].accentColor = 0x77FF;
+  colorTheme[1].accentColor = 0x3D7C;
   colorTheme[1].textColor = 0x0000;
+  colorTheme[1].flipTextColorOnUnselectedBg = true;
   colorTheme[1].flipTextColorOnAccentBg = true;
 
   colorTheme[2].name = "Icy dark"; //https://www.realtimecolors.com/?colors=ddf6fe-000c0f-6acbfb-040599-501ef8&fonts=Inter-Inter   //?
@@ -836,7 +895,7 @@ void writecolorTheme(){
   colorTheme[3].buttonSelectedColor = 0x1330;
   colorTheme[3].accentColor = 0x83BD;
   colorTheme[3].textColor = 0x00C4;
-  colorTheme[3].flipTextColorOnAccentBg = true;
+  colorTheme[3].flipTextColorOnUnselectedBg = true;
 
   colorTheme[4].name = "Cherry grove";
   colorTheme[4].backgroundColor = 0x1842;
@@ -851,9 +910,9 @@ void writecolorTheme(){
   colorTheme[5].buttonSelectedColor = 0xEBF3;
   colorTheme[5].accentColor = 0xD869;
   colorTheme[5].textColor = 0x1061;
-  colorTheme[5].flipTextColorOnAccentBg = true;
+  colorTheme[5].flipTextColorOnUnselectedBg = true;
 
-  colorTheme[6].name = "Neon / Waprowave"; //https://www.realtimecolors.com/?colors=e8fcf7-010404-18d8b1-0e2b81-2213a4&fonts=Inter-Inter
+  colorTheme[6].name = "Northern Lights"; //https://www.realtimecolors.com/?colors=e8fcf7-010404-18d8b1-0e2b81-2213a4&fonts=Inter-Inter
   colorTheme[6].backgroundColor = 0x0020;
   colorTheme[6].buttonUnselectedColor = 0x0085;
   colorTheme[6].buttonSelectedColor = 0x092B;
@@ -875,13 +934,13 @@ void writecolorTheme(){
   colorTheme[8].textColor = 0xEEDF;
   //ADD LIGHT TOO
 
-  colorTheme[9].name = "Green banana / Matcha"; //https://www.realtimecolors.com/?colors=1f220c-f6f8ec-596124-95d4a7-75c6ac&fonts=Inter-Inter
+  colorTheme[9].name = "Green banana"; //https://www.realtimecolors.com/?colors=1f220c-f6f8ec-596124-95d4a7-75c6ac&fonts=Inter-Inter
   colorTheme[9].backgroundColor = 0xF7DD;
   colorTheme[9].buttonUnselectedColor = 0xDF7A;
   colorTheme[9].buttonSelectedColor = 0x5B04;
   colorTheme[9].accentColor = 0x7635;
   colorTheme[9].textColor = 0x1901;
-  colorTheme[9].flipTextColorOnAccentBg = true;
+  colorTheme[9].flipTextColorOnUnselectedBg = true;
 
   colorTheme[10].name = "Laser"; //https://www.realtimecolors.com/?colors=f6e5e5-0c0303-be272c-851418-ad1015&fonts=Inter-Inter
   colorTheme[10].backgroundColor = 0x0800;
@@ -931,6 +990,7 @@ void drawDryingMenu(){
   updateTimeLeft();
 
   //BUTTONS
+  tft.setTextColor(0);
   tft.fillRoundRect(70, 129, 80, 26, 9, 0xFE2E);
   tft.setCursor(getCenteredTextX(70, 80, 5), getCenteredTextY(129, 26, 1));
   tft.print("PAUSE");
@@ -938,9 +998,10 @@ void drawDryingMenu(){
   tft.fillRoundRect(170, 129, 80, 26, 9, 0xF987);
   tft.setCursor(getCenteredTextX(170, 80, 4), getCenteredTextY(129, 26, 1));
   tft.print("STOP");
+  tft.setTextColor(colorTheme[settings.selectedcolorTheme].textColor);
 
   //POWER BAR
-  tft.fillRect(0, 165, 320, 5, 0x34FF);
+  tft.fillRect(0, 165, 320, 5, colorTheme[settings.selectedcolorTheme].buttonUnselectedColor);
 
 }
 
@@ -1009,52 +1070,37 @@ void drawAnnealingMenu(){
 
 void drawSettingsMenu(){
   tft.fillScreen(colorTheme[settings.selectedcolorTheme].backgroundColor);
-  //canvasMMButton.fillScreen(colorTheme[settings.selectedcolorTheme].backgroundColor);
-  tft.fillRoundRect(padding, 12, 260, 32, 9, colorTheme[settings.selectedcolorTheme].buttonSelectedColor); //Appearance button BG
-  tft.setCursor(getCenteredTextX(padding, 260, 10), getCenteredTextY(12, 32, 1));
-  tft.print("Appearance");
+  canvasMMButton.fillScreen(colorTheme[settings.selectedcolorTheme].backgroundColor);
+  canvasMMButton.fillRoundRect(padding, 0, 260, 32, 9, colorTheme[settings.selectedcolorTheme].buttonSelectedColor);
+  canvasMMButton.setCursor(getCenteredTextX(padding, 260, 10), getCenteredTextY(0, 32, 1));
+  if (colorTheme[settings.selectedcolorTheme].flipTextColorOnUnselectedBg) canvasMMButton.setTextColor(colorTheme[settings.selectedcolorTheme].backgroundColor);
+  canvasMMButton.print("Appearance");  
+  if (colorTheme[settings.selectedcolorTheme].flipTextColorOnUnselectedBg) canvasMMButton.setTextColor(colorTheme[settings.selectedcolorTheme].textColor);
+  tft.drawRGBBitmap(0, 12, canvasMMButton.getBuffer(), canvasMMButton.width(), canvasMMButton.height());
+
+  canvasMMButton.fillRoundRect(padding, 0, 260, 32, 9, colorTheme[settings.selectedcolorTheme].buttonUnselectedColor);
+  canvasMMButton.setCursor(getCenteredTextX(padding, 260, 4), getCenteredTextY(0, 32, 1));
+  canvasMMButton.print("Save");
+  tft.drawRGBBitmap(0, 56, canvasMMButton.getBuffer(), canvasMMButton.width(), canvasMMButton.height());
 
 }
 
-void drawAppearanceMenu(){
-  /*
-  for (uint8_t counter = 0; counter <=11; counter++){
-    uint16_t xStart = (counter%4)*70+5;
-    uint8_t yStart = (counter/4)*50+5;
-    drawColorThBox(xStart, yStart, counter, counter==encoder.getPosition());
-  }
-    */
-  NEWdrawColorThBox(1);
-}
-
-void drawColorThBox(int16_t xStart, int8_t yStart, uint8_t color, bool selected){
-  if (selected) tft.drawRoundRect(xStart, yStart, 70, 45, 9, 0xF800);
-  else tft.drawRoundRect(xStart, yStart, 70, 45, 9, colorTheme[settings.selectedcolorTheme].buttonUnselectedColor);
-  tft.fillRoundRect(xStart+1, yStart+1, 68, 43, 9, colorTheme[color].backgroundColor);
-  tft.setCursor(getCenteredTextX(xStart+5, 60, colorTheme[color].name.length()), yStart+5);
-  tft.setTextColor(colorTheme[color].textColor);
-  tft.print(colorTheme[color].name);
-  tft.setTextColor(colorTheme[settings.selectedcolorTheme].textColor);
-  tft.fillRoundRect(xStart+5, yStart+15, 60, 10, 5, colorTheme[color].buttonSelectedColor);
-  tft.fillRoundRect(xStart+5, yStart+30, 60, 10, 5, colorTheme[color].buttonSelectedColor);
-}
-
-void NEWdrawColorThBox(uint8_t color){
+void drawColorThBox(uint8_t color){
   tft.fillScreen(colorTheme[settings.selectedcolorTheme].backgroundColor);
   canvasTHBox.fillScreen(colorTheme[settings.selectedcolorTheme].backgroundColor);
   canvasTHBox.setTextColor(colorTheme[color].textColor);
-  bool selected = true;
+  bool selected = false;
   if (color == settings.selectedcolorTheme) selected = true;
   //Scroll bar
   tft.fillRect(310, 0, 10, 170, colorTheme[settings.selectedcolorTheme].buttonUnselectedColor);
-  tft.fillRect(310, map(color, 0, colorThemesQty, 0, 300), 10, 20, colorTheme[settings.selectedcolorTheme].buttonSelectedColor);
+  tft.fillRect(310, map(color, 0, colorThemesQty-1, 0, 150), 10, 20, colorTheme[settings.selectedcolorTheme].buttonSelectedColor);
 
 
   tft.setCursor(getCenteredTextX(0, 310, colorTheme[color].name.length()), 0);
   tft.print(colorTheme[color].name);
   //Outline 
   if (selected) {
-    canvasTHBox.fillRoundRect(0, 0, 270, 130, 9, colorTheme[settings.selectedcolorTheme].buttonSelectedColor);
+    canvasTHBox.fillRoundRect(0, 0, 270, 130, 9, colorTheme[settings.selectedcolorTheme].accentColor);
     //canvasTHBox.drawRoundRect(1, 1, 268, 128, 9, colorTheme[settings.selectedcolorTheme].buttonSelectedColor);
   }
   else{
@@ -1066,16 +1112,21 @@ void NEWdrawColorThBox(uint8_t color){
   canvasTHBox.fillRoundRect(11, 11, 248, 32, 9, colorTheme[color].buttonSelectedColor);
   canvasTHBox.fillRoundRect(11, 55, 248, 32, 9, colorTheme[color].buttonUnselectedColor);
   canvasTHBox.setCursor(getCenteredTextX(11, 248, 8), getCenteredTextY(11, 32, 1));
+  if (colorTheme[color].flipTextColorOnUnselectedBg) canvasTHBox.setTextColor(colorTheme[color].backgroundColor);
   canvasTHBox.print("selected");
+  if (colorTheme[color].flipTextColorOnUnselectedBg) canvasTHBox.setTextColor(colorTheme[color].textColor);
   canvasTHBox.setCursor(getCenteredTextX(11, 248, 10), getCenteredTextY(55, 32, 1));
   canvasTHBox.print("unselected");
 
   //Accent bar
+  canvasTHBox.fillRect(11, 99, 248, 10, colorTheme[color].buttonUnselectedColor);
+  canvasTHBox.fillRect(11, 99, 165, 10, colorTheme[color].accentColor);
 
 
   tft.drawRGBBitmap(20, 20, canvasTHBox.getBuffer(), canvasTHBox.width(), canvasTHBox.height());
 
 }
+
 // put function definitions here:
 
 //RIGHT -> padding
@@ -1084,14 +1135,10 @@ void NEWdrawColorThBox(uint8_t color){
 
 //CHANGELOG:
 /*
-Made the time and temp sensor selection tile highlight before changing
-Added safety feature, warning when the temperature sensor doesn't work
-Made the time pass correctly
-Made it possible to pause the time
-Fixed an issue where pausing would make time go by in slow motion
-Fixed some of the buttons flickering
-Added Colors!
+MADE THE PCB!!
+FIXing the COLOR MENU
 
-
+BUGLOG:
+FIXED INCORRECT POSITION SHOWING AFTER EXITING THE SETTINGS OR APPEARANCE MENU
 
 */
