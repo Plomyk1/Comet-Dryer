@@ -1,11 +1,12 @@
 # Assembly instructions
 ## 1.Picking some of the components:
 - If you cannot purchase the exact container I have, get one that can handle high temperature (≥80°C) containers made out of PP (Polypropylene) or PC (Polycarbonate) should be suitable. Verify that your spool(s) will fit inside with ~ 8cm of space in front of the spools for the heater and fan assembly
-- **GET A DIFFERENT PSU THAN I DID.** The one I purchased turned out to not even to be capable of delivering 4A at 12V due to overheating. You should probably avoid cheap 12V laptop power supplies from aliexpress, as the one I got was from there
+- You should probably avoid cheap 12V brick laptop power supplies from aliexpress, the one I purchased turned out to incapable of delivering even 4A at 12V due to overheating. If you end up choosing a different PSU from me, I recomend you get one rated for at least 8A, since that is the heaters initial current draw
 
 **The images in this guide might be slightly inacurate, as they were from the 1.1 version of the PCB! Most connections should stay the same though**
 ## 2. Adjust the voltage after stepping it down
 If your step down converter (the LM2596S) is adjustable, connect it to your 12v PSU, and adjust the output voltage to 5v by turning the knob on the potentiometer. The potentiometer is located here:
+
 <img width="388" height="208" alt="Potentiometer location" src="https://github.com/user-attachments/assets/4e22ff0b-4c7c-41be-a2f6-01ce6dc3ca20" />
 
 ## 3. Soldering the components to the PCB:
