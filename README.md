@@ -35,3 +35,13 @@ You can view the PCB wiring on KiCanvas with the button at the top of the readme
 
 ### If you want to make this dryer yourself, have a look at the assembly instructions in the [assembly.md](assembly.md) file!
 
+## Credits:
+Libraries I used: 
+- [Adafruit ST7789](https://github.com/adafruit/Adafruit-ST7735-Library) by Adafruit Industries
+- [Adafruit GFX](https://github.com/adafruit/Adafruit-GFX-Library) by Adafruit Industries
+- [Adafruit AHTX0](https://github.com/adafruit/Adafruit_AHTX0) by Adafruit Industries
+- [RotaryEncoder](https://github.com/mathertel/RotaryEncoder) by Matthias Hertel
+
+AI use:
+
+I have only used AI for debugging, and minor got help with electrical issues. All code in firmware.cpp was written by me
