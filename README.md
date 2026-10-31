@@ -32,6 +32,12 @@ You can find all the STL and STEP files in the [CAD directory](/CAD)
 The PCB has been designed to be manufactured by PCBWay. It may also fit the requirements of other manufacturers, but that is currently untested!
 You can view the PCB wiring on KiCanvas with the button at the top of the readme
 
+<img width="500" height="202" alt="PCB power wiring diagram" src="https://github.com/user-attachments/assets/d81146d8-a7e4-4c42-8633-f00a64d7998a" />
+
+Diagram showing how the PCB is connected to power to the power supply
+
+
+
 
 ### If you want to make this dryer yourself, have a look at the assembly instructions in the [assembly.md](assembly.md) file!
 
