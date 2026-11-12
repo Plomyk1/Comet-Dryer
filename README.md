@@ -2,6 +2,7 @@
 [![View PCB on KiCanvas](https://hack.club/pcb-badge)](https://kicanvas.org/?repo=https://github.com/Plomyk1/Comet-Dryer/tree/master/PCB)
 ![Hackatime Badge](https://hackatime-badge.hackclub.com/63466/Filament%20dryer?color=18d8b1&label=Time%20spent)
 <img width="4000" height="2256" alt="Comet Dryer hero image" src="https://github.com/user-attachments/assets/23dd8f50-0512-4d2f-a694-731ce3c8126b" />
+You can view a demo video of the project [here](https://www.youtube.com/watch?v=OSuviEian70)
 
 Comet Dryer is a 3D printer filament dryer, with support for drying 2 spools at once!
 
@@ -48,6 +49,13 @@ Libraries I used:
 - [Adafruit AHTX0](https://github.com/adafruit/Adafruit_AHTX0) by Adafruit Industries
 - [RotaryEncoder](https://github.com/mathertel/RotaryEncoder) by Matthias Hertel
 
+[Realtime Colors](https://www.realtimecolors.com/) by juxtopposed made finding the right colors a lot easier
+
+I got the drying temperatures and times from here:
+- [3d printing subreddit](https://www.reddit.com/r/3Dprinting/wiki/filament_drying/)
+- [flashforge wiki](https://wiki.flashforge.com/en/filaments_and_accessories/Drying_Temperature_and_Time)
+
+
 AI use:
 
-I have only used AI for debugging, and minor got help with electrical issues. All code in firmware.cpp was written by me
+I have only used AI for debugging, and minor help with electrical issues. All code in firmware.cpp was written by me
