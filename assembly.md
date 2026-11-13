@@ -37,27 +37,37 @@ The enclosure can be printed out of any filament, preferably PETG or higher vica
 
 **Remember to split the STL files into multiple objects in your slicer!** Print the enclosure laying on the side with openings for the display and rotary encoder
 
-## 5. Mounting the PCB, Power switch and barrel jack to the enclosure
+## 5. Prepairing the PSU
+- Cut a wire with a socket plug at the end to your desired lenght.
+- Twist the ends of the wires into hooks, and connect them to the Live (L) and Neutral (N) screw terminals on the power supply. Remember to make the wires enter from the right side and have their stripped part go around the screws to the right. The polarity of the live and neutral wires does not matter. If your plug has a grounding wire, connect it to the ground terminal (⏚)
+- Connect wires to the negative (-V) and positive (+V) screw terminals of the PSU.
+**If The switch on your PSU is set to the wrong voltage, remember to change it before connecting the power supply to power !!**
+
+After connecting the wires to the power supply, it should look like this:
+<img width="4000" height="1800" alt="PSU connections" src="https://github.com/user-attachments/assets/a90506f8-c405-46e0-b93c-8db2a9220343" />
+
+
+## 6. Mounting the PCB, Power switch and PSU wires to the enclosure
 - Press heatset inserts into the round holes in the enclosure with your soldering iron. The temperature should be 50°C higher than the temperature at which you printed the enclosure
 - Put the PCB into place. The holes should line up with the heatset inserts
 - Screw down the PCB, **with the screws going in from the back of the PCB**. Use the M3x10 screws
-- Push the power switch and barrel jack socket into place. Optionally, secure the socket with a nut if one came with it
+- Push the power switch and the PSU wires through the hole next to it
 - Solder the positive PSU wire to one of the metal tabs on the power switch
-- Solder a wire from the positive (shorter) leg of the barrel jack socket to the other metal tab of the switch
-- Solder the negative wire to the longer leg of the socket
+- Solder the positive wire to the other metal tab of the switch
+- Solder the negative wire to the negative wire coming out of the PSU
 - Attach the fan to the mounting bracket with M4 screws. The back side of the fan should be facing the inside of the box. Mount the fan to the opposite side from the rods going out
 
 After everything, the inside of the enclosure should look simmiliar to this:
 <img width="4000" height="2256" alt="Inside the enclosure" src="https://github.com/user-attachments/assets/ff984654-e2d0-4653-8313-1957d81171a4" />
 
 
-## 6. Make holes in the box
+## 7. Make holes in the box
 - Mark where the heatset inserts on the back of the enclosure are, when you place the enclosure in the position that you want to mount it in
 - Use the mounting bracket to determine where you need to mark holes for the M5 screws
 - Mark where you are going to make holes for the heater, fan and temperature sensor wires
 - Make the holes in your box. I used a dremel with a small tip to make them.
 
-## 7. Screw down the enclosure and bracket to the box
+## 8. Screw down the enclosure and bracket to the box
 I am not really sure how to describe this, so here are pictures of how everything should be mounted:
 
 Do not screw the enclosure to the box just yet
@@ -66,7 +76,7 @@ Do not screw the enclosure to the box just yet
 <img width="4000" height="2256" alt="heater mounting" src="https://github.com/user-attachments/assets/8457dc6a-758a-464a-940e-d24681f9ecc5" />
 <img width="564" height="1000" alt="Heater topdown view" src="https://github.com/user-attachments/assets/e1227e12-6351-4ec8-8d06-98d641b723dc" />
 
-## 8. Solder the wires to the components inside the box
+## 9. Solder the wires to the components inside the box
 - Push the heater wires through the holes you made. Solder them to the wires going from the PCB. Polarity does not matter
 - Push the fan wires through the hole and solder them to the wires going from the PCB.
 - Pull the wires from enclosure to the box and solder them to the temperature sensor.
